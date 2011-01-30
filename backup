@@ -1,0 +1,51 @@
+#!/usr/bin/env ruby
+# Create an archive of a Minecraft server world.
+# Usage: backup <server> <world> [--dry-run]
+
+require "pathname"
+require "shellwords"
+
+unless ARGV.size >= 2
+  STDERR.puts "Usage: backup <server> <world> [--dry-run]"
+  exit 1
+end
+
+root = Pathname.new(File.expand_path(File.join(File.dirname(__FILE__), "..")))
+server_name = ARGV[0]
+server = root.join("servers", server_name)
+
+unless server.directory?
+  STDERR.puts "Error: #{server} does not exist!"
+  exit 1
+end
+
+world_name = ARGV[1]
+worlds = server.join("worlds")
+world = worlds.join(world_name)
+
+unless world.directory?
+  STDERR.puts "Error: #{world} does not exist!"
+  exit 1
+end
+
+Dir.chdir(worlds)
+
+archive_name = "#{world_name}-#{Time.now.utc.strftime("%Y%m%d-%H%M%S%Z")}.tar.gz"
+archive = worlds.join(archive_name)
+
+if archive.exist?
+  STDERR.puts "Error: #{archive} already exists!"
+  exit 1
+end
+
+command = [`which tar`.chomp]
+command << "-czvf"
+command << archive.to_s.shellescape
+command << (world.to_s.sub(/\/*$/, "") << "/").shellescape
+command = command.join(" ")
+
+puts command
+
+unless ARGV.include?("--dry-run")
+  exec command
+end

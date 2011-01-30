@@ -1,0 +1,40 @@
+#!/usr/bin/env ruby
+# Start a Minecraft server.
+# Usage: start [server-name]
+
+require "pathname"
+require "shellwords"
+
+root = Pathname.new(File.expand_path(File.join(File.dirname(__FILE__), "..")))
+server_name = ARGV.find { |arg| arg =~ /^\w+$/ } || "survival"
+server = root.join("servers", server_name)
+
+unless server.directory?
+  STDERR.puts "Error: #{server} does not exist!"
+  exit 1
+end
+
+Dir.chdir(server.to_s)
+
+lib = root.join("lib")
+classpath = %w(BiomeTerrain.jar minecraft_server.jar).map do |jar|
+  lib.join(jar)
+end
+
+command = [`which nice`.chomp]
+command << "-n 1"
+command << `which java`.chomp
+command << "-Xms2048M"
+command << "-Xmx3072M"
+command << "-cp"
+command << classpath.map { |jar| jar.to_s.shellescape }.join(":")
+command << "net.minecraft.server.MinecraftServer"
+command << "nogui"
+
+$server_name = server_name.dup
+$command = command.join(" ")
+
+if $0 == __FILE__
+  puts $command
+  exec $command
+end

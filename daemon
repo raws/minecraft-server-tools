@@ -1,0 +1,20 @@
+#!/usr/bin/env ruby
+# Start a Minecraft server in a new screen session.
+# Usage: daemon [server-name] [-r] [--bukkit]
+# Use -r to attach to the screen session.
+# Use --bukkit to start a Bukkit Minecraft server.
+
+require "shellwords"
+
+start_script = ARGV.include?("--bukkit") ? "start-bukkit" : "start"
+start = File.join(File.dirname(__FILE__), start_script)
+load start
+
+command = [`which screen`.chomp]
+command << (ARGV.include?("-r") ? "-DR" : "-dm")
+command << "-S minecraft-#{$server_name.shellescape}"
+command << $command
+command = command.join(" ")
+
+puts command
+exec command

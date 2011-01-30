@@ -1,0 +1,38 @@
+#!/usr/bin/env ruby
+# Start a Bukkit Minecraft server.
+# Usage: start-bukkit [server-name]
+
+require "pathname"
+require "shellwords"
+
+root = Pathname.new(File.expand_path(File.join(File.dirname(__FILE__), "..")))
+server_name = ARGV.find { |arg| arg =~ /^\w+$/ } || "survival"
+server = root.join("servers", server_name)
+lib = root.join("lib")
+classpath = %w(BiomeBukkit.jar craftbukkit.jar).map do |jar|
+  lib.join(jar)
+end 
+
+unless server.directory?
+  STDERR.puts "Error: #{server} does not exist!"
+  exit 1
+end
+
+Dir.chdir(server.to_s)
+
+command = [`which nice`.chomp]
+command << "-n 1"
+command << `which java`.chomp
+command << "-Xms2g"
+command << "-Xmx3g"
+command << "-cp"
+command << classpath.map { |jar| jar.to_s.shellescape }.join(":")
+command << "org.bukkit.craftbukkit.Main"
+
+$server_name = server_name.dup
+$command = command.join(" ")
+
+if $0 == __FILE__
+  puts $command
+  exec $command
+end
