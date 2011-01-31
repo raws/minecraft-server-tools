@@ -41,7 +41,7 @@ end
 command = [`which tar`.chomp]
 command << "-czvf"
 command << archive.to_s.shellescape
-command << (world.to_s.sub(/\/*$/, "") << "/").shellescape
+command << (world.basename.to_s.sub(/\/*$/, "") << "/").shellescape
 command = command.join(" ")
 
 puts command
