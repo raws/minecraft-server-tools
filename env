@@ -15,6 +15,11 @@ def send_command(server_command)
   system command
 end
 
+def server_running?(server_name = nil)
+  screen = `which screen`.chomp
+  `#{screen} -ls` =~ /minecraft-#{server_name || $server_name}/i
+end
+
 def minecraft_path
   @minecraft_path ||= Pathname.new(File.join(File.dirname(__FILE__), ".."))
 end

@@ -12,19 +12,18 @@ end
 
 $server_name = ARGV.find { |arg| arg =~ /^\w+$/ } || "survival"
 
-if ARGV.include?("--warn")
-  send_command "say Server restarting in one minute!"
-  sleep 60
-end
+if server_running?
+  if ARGV.include?("--warn")
+    send_command "say Server restarting in one minute!"
+    sleep 60
+  end
 
-send_command "stop"
+  send_command "stop"
 
-puts "Waiting for server to shut down..."
-screen = `which screen`.chomp
-until `#{screen} -ls` !~ /minecraft-#{$server_name}/
-  sleep 3
+  puts "Waiting for server to shut down..."
+  sleep(3) until !server_running?
+  puts "Server stopped."
 end
-puts "Server stopped."
 
 command = [bin_path.join("daemon")]
 command << $server_name
