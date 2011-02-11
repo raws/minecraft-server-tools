@@ -26,7 +26,7 @@ until `#{screen} -ls` !~ /minecraft-#{$server_name}/
 end
 puts "Server stopped."
 
-command = ["./daemon"]
+command = [bin_path.join("daemon")]
 command << $server_name
 command << "--bukkit" if ARGV.include?("--bukkit")
 command = command.join(" ")

@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 # Set up Minecraft admin environment.
 
+require "pathname"
 require "shellwords"
 
 def send_command(server_command)
@@ -12,4 +13,16 @@ def send_command(server_command)
   command = command.join(" ")
   puts command
   system command
+end
+
+def minecraft_path
+  @minecraft_path ||= Pathname.new(File.join(File.dirname(__FILE__), ".."))
+end
+
+def bin_path
+  @bin_path ||= minecraft_path.join("bin")
+end
+
+def server_path
+  minecraft_path.join("servers", $server_name)
 end
