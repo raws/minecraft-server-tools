@@ -1,0 +1,35 @@
+#!/usr/bin/env ruby
+# Restart a Minecraft server.
+# Usage: restart [server-name] [--warn] [--bukkit]
+
+$:.unshift File.dirname(__FILE__)
+load "env"
+
+if ARGV.include?("-h") || ARGV.include?("--help")
+  STDERR.puts "Usage: restart [server-name] [--warn]"
+  exit 1
+end
+
+$server_name = ARGV.find { |arg| arg =~ /^\w+$/ } || "survival"
+
+if ARGV.include?("--warn")
+  send_command "say Server restarting in one minute!"
+  sleep 60
+end
+
+send_command "stop"
+
+puts "Waiting for server to shut down..."
+screen = `which screen`.chomp
+until `#{screen} -ls` !~ /minecraft-#{$server_name}/
+  sleep 3
+end
+puts "Server stopped."
+
+command = ["./daemon"]
+command << $server_name
+command << "--bukkit" if ARGV.include?("--bukkit")
+command = command.join(" ")
+
+puts command
+exec command
