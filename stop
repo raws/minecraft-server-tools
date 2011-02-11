@@ -1,0 +1,20 @@
+#!/usr/bin/env ruby
+# Stop a Minecraft server.
+# Usage: stop [server-name] [--warn]
+
+$:.unshift File.dirname(__FILE__)
+load "env"
+
+if ARGV.include?("-h") || ARGV.include?("--help")
+  STDERR.puts "Usage: stop [server-name] [--warn]"
+  exit 1
+end
+
+$server_name = ARGV.find { |arg| arg =~ /^\w+$/ } || "survival"
+
+if ARGV.include?("--warn")
+  send_command "say Server shutting down in one minute!"
+  sleep 60
+end
+
+send_command "stop"

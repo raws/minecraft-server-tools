@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+# Set up Minecraft admin environment.
+
+require "shellwords"
+
+def send_command(server_command)
+  server_command.gsub!(/[\r\n]*$/, "\r")
+  command = [`which screen`.chomp]
+  command << "-S minecraft-#{$server_name}"
+  command << "-p 0"
+  command << "-X stuff #{server_command.shellescape}"
+  command = command.join(" ")
+  puts command
+  system command
+end
