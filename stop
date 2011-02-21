@@ -10,7 +10,7 @@ if ARGV.include?("-h") || ARGV.include?("--help")
   exit 1
 end
 
-$server_name = ARGV.find { |arg| arg =~ /^\w+$/ } || "survival"
+$server_name = ARGV.find { |arg| arg =~ /^\S+$/ } || "survival"
 
 if ARGV.include?("--warn")
   send_command "say Server shutting down in one minute!"

@@ -6,7 +6,7 @@ require "pathname"
 require "shellwords"
 
 root = Pathname.new(File.expand_path(File.join(File.dirname(__FILE__), "..")))
-server_name = ARGV.find { |arg| arg =~ /^\w+$/ } || "survival"
+server_name = ARGV.find { |arg| arg =~ /^\S+$/ } || "survival"
 server = root.join("servers", server_name)
 
 unless server.directory?
