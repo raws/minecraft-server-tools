@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 # Start a Minecraft server.
-# Usage: start [server-name]
+# Usage: start [server-name] [--no-biome-terrain]
 
 require "pathname"
 require "shellwords"
@@ -17,7 +17,9 @@ end
 Dir.chdir(server.to_s)
 
 lib = root.join("lib")
-classpath = %w(BiomeTerrain.jar minecraft_server.jar).map do |jar|
+classpath = %w(minecraft_server.jar)
+classpath.unshift "BiomeTerrain.jar" unless ARGV.include?("--no-biome-terrain")
+classpath.map! do |jar|
   lib.join(jar)
 end
 
