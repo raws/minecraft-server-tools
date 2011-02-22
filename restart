@@ -1,19 +1,19 @@
 #!/usr/bin/env ruby
 # Restart a Minecraft server.
-# Usage: restart [server-name] [--warn] [--bukkit]
+# Usage: restart [server-name] [--warn] [daemon options]
 
 $:.unshift File.dirname(__FILE__)
 load "env"
 
-if ARGV.include?("-h") || ARGV.include?("--help")
-  STDERR.puts "Usage: restart [server-name] [--warn]"
+if ARGV.delete("-h") || ARGV.delete("--help")
+  STDERR.puts "Usage: restart [server-name] [--warn] [daemon options]"
   exit 1
 end
 
 $server_name = ARGV.find { |arg| arg =~ /^\S+$/ } || "survival"
 
 if server_running?
-  if ARGV.include?("--warn")
+  if ARGV.delete("--warn")
     send_command "say Server restarting in one minute!"
     sleep 60
   end
@@ -25,10 +25,7 @@ if server_running?
   puts "Server stopped."
 end
 
-command = [bin_path.join("daemon")]
-command << $server_name
-command << "--bukkit" if ARGV.include?("--bukkit")
-command = command.join(" ")
+command = [bin_path.join("daemon"), *ARGV].join(" ")
 
 puts command
 exec command

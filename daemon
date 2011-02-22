@@ -6,12 +6,12 @@
 
 require "shellwords"
 
-start_script = ARGV.include?("--bukkit") ? "start-bukkit" : "start"
+start_script = ARGV.delete("--bukkit") ? "start-bukkit" : "start"
 start = File.join(File.dirname(__FILE__), start_script)
 load start
 
 command = [`which screen`.chomp]
-command << (ARGV.include?("-r") ? "-DR" : "-dm")
+command << (ARGV.delete("-r") ? "-DR" : "-dm")
 command << "-S minecraft-#{$server_name.shellescape}"
 command << $command
 command = command.join(" ")
