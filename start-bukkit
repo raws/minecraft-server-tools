@@ -9,7 +9,9 @@ root = Pathname.new(File.expand_path(File.join(File.dirname(__FILE__), "..")))
 server_name = ARGV.find { |arg| arg =~ /^\S+$/ } || "survival"
 server = root.join("servers", server_name)
 lib = root.join("lib")
-classpath = %w(BiomeBukkit.jar craftbukkit.jar).map do |jar|
+classpath = %w(craftbukkit.jar)
+classpath.unshift "BiomeBukkit.jar" unless ARGV.include?("--no-biome-terrain")
+classpath.map! do |jar|
   lib.join(jar)
 end 
 
