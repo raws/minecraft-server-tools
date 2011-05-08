@@ -30,7 +30,7 @@ end
 
 send_command "save-off"
 send_command "save-all"
-sleep 5 # We should really attach to screen and actually wait for the save confirmation
+sleep 60 # We should really attach to screen and actually wait for the save confirmation
 
 Dir.chdir(worlds)
 
