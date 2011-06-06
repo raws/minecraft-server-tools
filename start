@@ -26,6 +26,7 @@ end
 command = [`which nice`.chomp]
 command << "-n 1"
 command << `which java`.chomp
+command << "-Xincgc"
 command << "-Xms2048M"
 command << "-Xmx3072M"
 command << "-cp"

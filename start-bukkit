@@ -25,6 +25,7 @@ Dir.chdir(server.to_s)
 command = [`which nice`.chomp]
 command << "-n 1"
 command << `which java`.chomp
+command << "-Xincgc"
 command << "-Xms2g"
 command << "-Xmx3g"
 command << "-cp"
