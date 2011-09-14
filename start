@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 # Start a Minecraft server.
-# Usage: start [server-name] [--no-biome-terrain]
+# Usage: start [server-name]
 
 require "pathname"
 require "shellwords"
@@ -16,21 +16,14 @@ end
 
 Dir.chdir(server.to_s)
 
-lib = root.join("lib")
-classpath = %w(minecraft_server.jar)
-classpath.map! do |jar|
-  lib.join(jar)
-end
-
 command = [`which nice`.chomp]
 command << "-n 1"
 command << `which java`.chomp
 command << "-Xincgc"
-command << "-Xms2048M"
-command << "-Xmx3072M"
-command << "-cp"
-command << classpath.map { |jar| jar.to_s.shellescape }.join(":")
-command << "net.minecraft.server.MinecraftServer"
+command << "-Xms2G"
+command << "-Xmx3G"
+command << "-jar"
+command << root.join("lib/minecraft_server.jar")
 command << "nogui"
 
 $server_name = server_name.dup
