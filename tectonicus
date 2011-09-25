@@ -1,0 +1,63 @@
+#!/usr/bin/env ruby
+# Map a Minecraft world using Tectonicus.
+# Usage: tectonicus <server> <world>
+
+require "fileutils"
+require "pathname"
+require "shellwords"
+
+class Pathname
+  def ensure!
+    if exist?
+      self
+    else
+      STDERR.puts "Error: #{self} does not exist!"
+      exit 1
+    end
+  end
+  
+  def mkdir_p(*args)
+    FileUtils.mkdir_p(@path, *args)
+    self
+  end
+end
+
+if ARGV.empty? || ARGV.any? { |arg| arg =~ /^--?h/ }
+  puts "Usage: tectonicus <server> <world>"
+  exit
+end
+
+root = Pathname.new(File.expand_path(File.join(File.dirname(__FILE__), "..")))
+minecraft = root.join("lib", "minecraft.jar").ensure!
+tectonicus = root.join("lib", "tectonicus.jar").ensure!
+
+server = root.join("servers", ARGV[0]).ensure!
+world = server.join("worlds", ARGV[1]).ensure!
+output = server.join("maps", ARGV[1]).mkdir_p
+
+Dir.chdir(output.to_s)
+
+options = {
+  "minecraftJar" => minecraft.to_s.shellescape,
+  "worldDir" => world.to_s.shellescape,
+  "outputDir" => output.to_s.shellescape,
+  "outputHtmlName" => "index.html",
+  "imageFormat" => "jpg",
+  "numZoomLevels" => 4,
+  "numSamples" => 0,
+  "players" => "all",
+  "signs" => "all",
+  "verbose" => "true"
+}
+
+command = [`which nice`.chomp]
+command << "-n 20"
+command << `which java`.chomp
+command << "-Xincgc"
+command << "-jar"
+command << tectonicus
+options.each { |key, val| command << "#{key}=#{val}" }
+command = command.join(" ")
+
+puts command
+exec command
