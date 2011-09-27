@@ -17,7 +17,7 @@ end
 
 def server_running?(server_name = nil)
   screen = `which screen`.chomp
-  `#{screen} -ls` =~ /minecraft-#{server_name || $server_name}/i
+  `#{screen} -ls` =~ /minecraft-#{server_name || $server_name}\s/i
 end
 
 def minecraft_path
