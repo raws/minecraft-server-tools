@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 # Map a Minecraft world using Tectonicus.
-# Usage: tectonicus <server> <world>
+# Usage: tectonicus <server> <world> [-r]
 
 require "fileutils"
 require "pathname"
@@ -23,7 +23,7 @@ class Pathname
 end
 
 if ARGV.empty? || ARGV.any? { |arg| arg =~ /^--?h/ }
-  puts "Usage: tectonicus <server> <world>"
+  puts "Usage: tectonicus <server> <world> [-r]"
   exit
 end
 
@@ -50,7 +50,10 @@ options = {
   "verbose" => "true"
 }
 
-command = [`which nice`.chomp]
+command = [`which screen`.chomp]
+command << (ARGV.delete("-r") ? "-DR" : "-dm")
+command << "-S minecraft-#{ARGV[0].shellescape}-tectonicus"
+command << `which nice`.chomp
 command << "-n 20"
 command << `which java`.chomp
 command << "-Xincgc"
