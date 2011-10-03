@@ -32,7 +32,7 @@ if server_running?($server_name)
   send_command "save-off"
   send_command "save-all"
   sleep 60 # We should really attach to screen and actually wait for the save confirmation
-else
+end
 
 Dir.chdir(worlds)
 
